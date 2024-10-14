@@ -4,12 +4,11 @@
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
 int main(int argc, char *argv[]) {
-	
-	char c;
+		char c;
 	int num=0;
 	
 	printf("Input a string:");
-	scanf("%c", &c);
+	
 	
 	while((c=getchar())!='\n')
 	{
@@ -19,7 +18,5 @@ int main(int argc, char *argv[]) {
 	};
 	
 	printf("The number of digits is %i",num);
-	
-	
 	return 0;
 }
