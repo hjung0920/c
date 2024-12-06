@@ -10,6 +10,9 @@
 // ----- EX. 1 : Preparation------------
 #include "board.h"
 
+//ex.5
+#define MAX_SHARKSTEP 6
+#define SHARK_INITPOS -4
 // ----- EX. 4 : player ------------
 #define N_PLAYER            3
 // ----- EX. 4 : player ------------
@@ -104,6 +107,23 @@ void printPlayerStatus(void)
 // ----- EX. 4 : player ------------
 
 // ----- EX. 5 : shark ------------
+int board_stepShark(void)
+{
+	static int shark_pos = SHARK_INITPOS;
+	
+	int shark_move=rand()%MAX_SHARKSTEP+1;
+	shark_pos+=shark_move;
+	
+	if(shark_pos>=N_BOARD)
+	{
+		shark_pos=N_BOARD-1;
+	}
+	printf("Shark moved to position %i\n", shark_pos);
+	checkDie();
+	
+	return shark_pos;
+
+}
 void checkDie(void)
 {
     int i;
@@ -116,6 +136,7 @@ void checkDie(void)
         }
     }
 }
+
 // ----- EX. 5 : shark ------------
 
 // ----- EX. 6 : game end ------------
@@ -218,23 +239,41 @@ int main(int argc, const char * argv[]) {
         scanf("%d", &dum);
         fflush(stdin);
 // ----- EX. 4 : player ------------
+
         dieResult = rolldie();
-        
-        //step 2-3. moving
-        player_position[turn]+=dieResult;
-        if(player_position[turn]>=N_COINPOS)
-        {
-        	player_position[turn]=N_COINPOS-1;
-		}
-        //step 2-4. coin
+        player_position[turn] += dieResult;
+        if (player_position[turn] >= N_BOARD)
+		{
+            player_position[turn] = N_BOARD - 1;
+            player_status[turn] = PLAYERSTATUS_END;
+            printf("%s reached the end of the board!\n", player_name[turn]);
+        } else 
+		{
+            // step 2-4. coin
+            int coins = board_getBoardCoin(player_position[turn]);
+            player_coin[turn] += coins;
+            if (coins > 0)
+			{
+                printf("%s collected %d coins!\n", player_name[turn], coins);
+            }
+        }
+
+        // step 2-5. end process
+        board_stepShark();
+		
+		
+        if (turn % N_PLAYER == 0) {
+            board_stepShark();
+        }
+
+        turn = (turn + 1) % N_PLAYER;
+    } while (game_end() == 0);
     
-        board_getBoardCoin();
-       
+	
         
-        //step 2-5. end process
         
 // ----- EX. 6 : game end ------------
-    } while(game_end() == 0);
+   
     
     //step 3. game end process
     printf("GAME END!!\n");
